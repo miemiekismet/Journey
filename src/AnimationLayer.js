@@ -47,6 +47,7 @@ var MarketLayer = cc.Layer.extend({
         var padding = winsize.height / 40;
 
         var user_info = new UserData();
+        var system_info = new SystemData();
 
         //Drawing Market Title
         cc.log("#Drawing Market in Market Scene");
@@ -62,14 +63,14 @@ var MarketLayer = cc.Layer.extend({
         market_list.x = 0;
         market_list.y = 0;
 
-        var goods_today = getGoods();
+        var goods_today = system_info.getGoods();
+        var prices_today = system_info.getPrices();
+
+        var idx = 0;
         for (var i in goods_today) {
             var good = goods_today[i];
-            cc.log("#Drawing good " + good + " in Market Scene");
-            var price = Math.floor(goods_price_bottom[good]
-                + Math.random() * (goods_price_top[good] - goods_price_bottom[good]));
-            var good_label = cc.LabelTTF.create(goods_name[good] + ":" + price, "Arial", 20);
-            var good_item = cc.MenuItemLabel.create(good_label, this);
+            var good_label = cc.LabelTTF.create(goods_name[good] + ":" + prices_today[idx], "Arial", 20);
+            var good_item = cc.MenuItemLabel.create(good_label, buyIn(good), this);
             good_item.attr({
                 x: padding,
                 y: winsize.height - (5 + 2 * i) * padding,
@@ -77,14 +78,29 @@ var MarketLayer = cc.Layer.extend({
                 anchorY: 0
             });
             market_list.addChild(good_item);
+            idx++;
         }
-        var lb = cc.LabelTTF.create("btn", "Arial", 20);
-        var btn = cc.ControlButton.create();
-        this.addChild(btn, 2);
+        //Drawing Exit Btn
+        var exit_label = cc.LabelTTF.create("Exit", "Arial", 20);
+        var exit_item = cc.MenuItemLabel.create(
+            exit_label,
+            function () {
+                cc.log("@Exit clicked");
+                cc.director.runScene(new PlayScene());
+            },
+            this);
+        var exit_menu = cc.Menu.create(exit_item);
+        exit_menu.attr({
+            width: 50,
+            x: padding * 3,
+            y: padding * 3,
+            anchorX: 0,
+            anchorY: 0
+        });
+        this.addChild(exit_menu, 1);
         this.addChild(market_list, 1);
     }
 });
-
 var BagLayer = cc.Layer.extend({
     ctor:function () {
         this._super();
@@ -108,15 +124,13 @@ var BagLayer = cc.Layer.extend({
             anchorY: 0
         });
 
-        var bag_list = cc.ScrollView.create(bag_title_item);
-        bag_list.setColor(cc.Color3BWapper(255, 0, 0));
+        var bag_list = cc.Menu.create(bag_title_item);
 
         bag_list.attr({
-            width: 150,
-            heigth: winsize.heigth - 2 * padding,
             x: padding,
-            y: padding});
-        bag_list.setDirection(ccui.SCROLLVIEW_DIRECTION_VERTICAL);
+            y: padding,
+            anchorX: 0,
+            anchorY: 0});
 
         //Drawing Bag Content
         var i = 0;
@@ -136,7 +150,6 @@ var BagLayer = cc.Layer.extend({
             bag_list.addChild(stock_item);
             i++;
         }
-
         //Drawing Exit Btn
         var exit_label = cc.LabelTTF.create("Exit", "Arial", 20);
         var exit_item = cc.MenuItemLabel.create(
@@ -146,16 +159,16 @@ var BagLayer = cc.Layer.extend({
                 cc.director.runScene(new PlayScene());
             },
             this);
-        exit_item.attr({
+        var exit_menu = cc.Menu.create(exit_item);
+        exit_menu.attr({
             width: 50,
-            x: padding,
+            x: padding * 3,
             y: padding * 3,
             anchorX: 0,
             anchorY: 0
         });
-        bag_list.addChild(exit_item);
-
         this.addChild(bag_list, 1);
+        this.addChild(exit_menu, 1);
     }
 });
 
@@ -229,26 +242,6 @@ var MenuLayer= cc.Layer.extend({
     }
 });
 
-function getGoods(){
-    var n = goods_num;
-    var top = 2 / 3;
-    var bottom = 1 / 3;
-    var m = Math.floor((bottom + Math.random() * (top - bottom)) * n);
-    cc.log("m:" + m);
-    var chosen = new Array();
-    for (var i = 0; i < n; i++) {
-        cc.log("chosen.length" + chosen.length);
-        if (chosen.length < m) {
-            chosen.push(i);
-        }
-        else {
-            if (Math.random() > m / (i + 1)) {
-                chosen[Math.floor(Math.random() * m)] = i;
-            }
-        }
-        i++;
-    }
-    cc.log("Chosen: ");
-    for (var j = 0; j < m; j++) cc.log(chosen[j]);
-    return chosen;
+function buyIn(good) {
+
 }
