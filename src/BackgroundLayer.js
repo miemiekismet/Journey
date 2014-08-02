@@ -23,6 +23,7 @@ var BackgroundLayer = cc.Layer.extend({
             case 1: spriteBG = createTmxMap(this.city); break; // City
             case 2: spriteBG = createNormalMap(2); break; //Bag
             case 3: spriteBG = createNormalMap(2); break; //Market
+            case 4: spriteBG = createNormalMap(4); break; //Fight
             default: spriteBG = createNormalMap(0); break;
         };
         spriteBG.attr({

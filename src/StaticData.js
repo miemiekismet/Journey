@@ -45,5 +45,15 @@ var city_map_name = {
 
 var pic_map_name = {
     0: res.bg_open_jpg,
-    2: res.bg_bag_png
+    2: res.bg_bag_png,
+    4: res.bg_fight_png
+};
+
+var ball_name = {
+    0: res.red_ball_png,
+    1: res.blue_ball_png,
+    2: res.green_ball_png,
+    3: res.gold_ball_png,
+    4: res.silver_ball_png,
+    5: res.peach_ball_png
 };

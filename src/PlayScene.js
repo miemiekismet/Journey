@@ -6,8 +6,11 @@ var PlayScene = cc.Scene.extend({
     onEnter:function () {
         this._super();
         //add three layer in the right order
-        this.addChild(new BackgroundLayer(1, 0));
-        this.addChild(new AnimationLayer(0));
-        this.addChild(new StatusLayer());
+        var bg_layer = new BackgroundLayer(1, 0);
+        var sts_layer = new StatusLayer();
+        var anm_layer = new AnimationLayer(0, sts_layer);
+        this.addChild(bg_layer);
+        this.addChild(anm_layer);
+        this.addChild(sts_layer);
     }
 });

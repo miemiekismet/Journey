@@ -17,10 +17,24 @@ var WelcomeLayer = cc.Layer.extend({
 
         //Menu
         cc.log("#Setting Menu");
+        var startOverLabel = cc.LabelTTF.create("StartOver", "Arial", 30);
         var startLabel = cc.LabelTTF.create("Start", "Arial", 30);
         var exitLabel = cc.LabelTTF.create("Exit", "Arial", 30);
 
-        // add a "close" icon to exit the progress. it's an autorelease object
+        var startOverItem = cc.MenuItemLabel.create(
+            startOverLabel,
+            function () {
+                cc.log("@Start Over clicked");
+                alert("Game Data Cleared.");
+                cc.sys.localStorage.clear();
+            }, this);
+        startOverItem.attr({
+            x: size.width / 2,
+            y: size.height / 2 + startOverItem.height,
+            anchorX: 0.5,
+            anchorY: 0.5
+        });
+
         var startItem = cc.MenuItemLabel.create(
             startLabel,
             function () {
@@ -29,7 +43,7 @@ var WelcomeLayer = cc.Layer.extend({
             }, this);
         startItem.attr({
             x: size.width / 2,
-            y: size.height / 2,
+            y: size.height / 2 - startItem.height,
             anchorX: 0.5,
             anchorY: 0.5
         });
@@ -41,14 +55,15 @@ var WelcomeLayer = cc.Layer.extend({
             }, this);
         exitItem.attr({
             x: size.width / 2,
-            y: size.height / 2 - 2 * exitItem.height,
+            y: size.height / 2 - 3 * exitItem.height,
             anchorX: 0.5,
             anchorY: 0.5
         });
 
-        var menu = cc.Menu.create(startItem);
+        var menu = cc.Menu.create(startOverItem);
         menu.x = 0;
         menu.y = 0;
+        menu.addChild(startItem);
         menu.addChild(exitItem);
         this.addChild(menu, 1);
 

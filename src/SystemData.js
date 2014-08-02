@@ -11,18 +11,20 @@ var system_data = {
     "Updated": false
 };
 
-function SystemData() {
+var SystemData = function() {
     this.init = function () {
         cc.log("#SystemData init");
-        if (sys.localStorage.getItem("system_data") == null) {
-            sys.localStorage.setItem("system_data", system_data);
+        if (cc.sys.localStorage.getItem("system_data") == null) {
+        cc.log("#system data is null");
+            this.saveToSystem();
         }
         else {
-            this.saveToSystem();
+        cc.log("#system data is not null");
+            system_data = JSON.parse(cc.sys.localStorage.getItem("system_data"));
         }
     };
     this.saveToSystem = function() {
-        sys.localStorage.setItem("system_data", system_data);
+        cc.sys.localStorage.setItem("system_data", JSON.stringify(system_data));
     };
     this.getDay = function() {
         return system_data["Day"];
@@ -45,6 +47,7 @@ function SystemData() {
         }
         return goods;
     }
+
     this.getPrices = function() {
         var prices = new Array();
         if (!system_data["Updated"]) {
@@ -58,6 +61,15 @@ function SystemData() {
         }
         return prices;
     }
+
+    this.getPrice = function(good_num) {
+        if (!system_data["Updated"]) {
+            cc.log("###Warning: unexpected logic - get price before init it###");
+            this.updateGoods();
+        }
+        return system_data["Goods"][good_num];
+    }
+
     this.updateGoods = function(){
         var n = goods_num;
         var top = 2 / 3;
@@ -84,6 +96,7 @@ function SystemData() {
             cc.log(chosen[j] + ": " + chosen_prices[j]);
         }
         system_data["Updated"] = true;
+        this.saveToSystem();
     }
     this.updatePrice = function(goods_today){
     var prices = new Array();
@@ -95,4 +108,10 @@ function SystemData() {
             }
         return prices;
     }
+}
+
+SystemData.create = function() {
+    var system_data = new SystemData();
+    system_data.init();
+    return system_data;
 }
