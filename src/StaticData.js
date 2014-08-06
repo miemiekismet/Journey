@@ -57,3 +57,36 @@ var ball_name = {
     4: res.silver_ball_png,
     5: res.peach_ball_png
 };
+
+var combo_name = {
+    1: res.combo_1_png,
+    2: res.combo_2_png,
+    3: res.combo_3_png,
+    4: res.combo_4_png,
+    5: res.combo_5_png,
+    6: res.combo_6_png,
+    7: res.combo_7_png,
+    8: res.combo_8_png,
+    9: res.combo_9_png,
+    10: res.combo_0_png,
+    11: res.combo_1_png,
+    12: res.combo_2_png,
+    13: res.combo_3_png,
+    14: res.combo_4_png,
+    15: res.combo_5_png,
+    16: res.combo_6_png,
+    17: res.combo_7_png,
+    18: res.combo_8_png,
+    19: res.combo_9_png,
+    20: res.combo_0_png,
+    21: res.combo_1_png,
+    22: res.combo_2_png,
+    23: res.combo_3_png,
+    24: res.combo_4_png,
+    25: res.combo_5_png,
+    26: res.combo_6_png,
+    27: res.combo_7_png,
+    28: res.combo_8_png,
+    29: res.combo_9_png,
+    30: res.combo_0_png
+}
