@@ -3,22 +3,36 @@
  */
 
 var AnimationLayer = cc.Layer.extend({
-    ctor:function () {
+    scene_num: -1,
+    sts_layer: null,
+    ctor:function (scene_num, sts_layer) {
         this._super();
+        this.scene_num = scene_num;
+        this.sts_layer = sts_layer;
         this.init();
     },
     init:function () {
         this._super();
-
-        var menu_layer = new MenuLayer();
-        this.addChild(menu_layer, 10);
-//        var spriteRunner = cc.Sprite.create(res.player_png);
-//        spriteRunner.attr({x: 80, y: 85});
-//
-//        //create the move action
-//        var actionTo = cc.MoveTo.create(2, cc.p(300, 85));
-//        spriteRunner.runAction(cc.Sequence.create(actionTo));
-//        this.addChild(spriteRunner);
+        if (this.scene_num == 0) {
+            cc.log("#Adding Menu Layer for Playing Scene");
+            var menu_layer = new MenuLayer();
+            this.addChild(menu_layer, 10);
+        }
+        else if (this.scene_num == 1) {
+            cc.log("#Adding Bag Layer for Bag Scene");
+            var bag_layer = new BagLayer();
+            this.addChild(bag_layer, 10);
+        }
+        else if (this.scene_num == 2) {
+            cc.log("#Adding Market Layer for Market Scene");
+            var market_layer = new MarketLayer(this.sts_layer);
+            this.addChild(market_layer, 10);
+        }
+        else if (this.scene_num == 3) {
+            cc.log("#Adding Fight Layer for Fight Scene");
+            var fight_layer = new FightLayer();
+            this.addChild(fight_layer, 10);
+        }
     }
 });
 
@@ -55,8 +69,9 @@ var MenuLayer= cc.Layer.extend({
 
         //Drawing Menu Text
         cc.log("#Drawing Menu in Play Scene");
-        var bag_label = cc.LabelTTF.create("Bag", "Arial", 12);
-        var more_label = cc.LabelTTF.create("To be Added", "Arial", 12);
+        var bag_label = cc.LabelTTF.create("Bag", "Arial", 23);
+        var market_label = cc.LabelTTF.create("Market", "Arial", 23);
+        var fight_label = cc.LabelTTF.create("Fight", "Arial", 23);
 
         // add a "close" icon to exit the progress. it's an autorelease object
         var bag_item = cc.MenuItemLabel.create(
@@ -71,15 +86,27 @@ var MenuLayer= cc.Layer.extend({
                 anchorX: 0,
                 anchorY: 0
             });
-
-        var more_item = cc.MenuItemLabel.create(
-            more_label,
+        var market_item = cc.MenuItemLabel.create(
+            market_label,
             function () {
-                cc.log("@More is clicked!");
+                cc.log("@Market is clicked!");
+                cc.director.runScene(new MarketScene());
             }, this);
-        more_item.attr({
+        market_item.attr({
             x: padding,
-            y: this.height - more_item.height - 4 * padding,
+            y: this.height - market_item.height - 5 * padding,
+            anchorX: 0,
+            anchorY: 0
+        });
+        var fight_item = cc.MenuItemLabel.create(
+            fight_label,
+            function () {
+                cc.log("@Fight is clicked!");
+                cc.director.runScene(new FightScene());
+            }, this);
+        fight_item.attr({
+            x: padding,
+            y: this.height - market_item.height - fight_item.height - 7 * padding,
             anchorX: 0,
             anchorY: 0
         });
@@ -87,7 +114,8 @@ var MenuLayer= cc.Layer.extend({
         var menu = cc.Menu.create(bag_item);
         menu.x = 0;
         menu.y = 0;
-        menu.addChild(more_item);
+        menu.addChild(market_item);
+        menu.addChild(fight_item);
         this.addChild(menu, 1);
     }
 });

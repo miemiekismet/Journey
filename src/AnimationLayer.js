@@ -69,9 +69,9 @@ var MenuLayer= cc.Layer.extend({
 
         //Drawing Menu Text
         cc.log("#Drawing Menu in Play Scene");
-        var bag_label = cc.LabelTTF.create("Bag", "Arial", 12);
-        var market_label = cc.LabelTTF.create("Market", "Arial", 12);
-        var fight_label = cc.LabelTTF.create("Fight", "Arial", 12);
+        var bag_label = cc.LabelTTF.create("Bag", "Arial", 23);
+        var market_label = cc.LabelTTF.create("Market", "Arial", 23);
+        var fight_label = cc.LabelTTF.create("Fight", "Arial", 23);
 
         // add a "close" icon to exit the progress. it's an autorelease object
         var bag_item = cc.MenuItemLabel.create(
@@ -94,7 +94,7 @@ var MenuLayer= cc.Layer.extend({
             }, this);
         market_item.attr({
             x: padding,
-            y: this.height - market_item.height - 4 * padding,
+            y: this.height - market_item.height - 5 * padding,
             anchorX: 0,
             anchorY: 0
         });
@@ -106,7 +106,7 @@ var MenuLayer= cc.Layer.extend({
             }, this);
         fight_item.attr({
             x: padding,
-            y: this.height - market_item.height - fight_item.height - 5 * padding,
+            y: this.height - market_item.height - fight_item.height - 7 * padding,
             anchorX: 0,
             anchorY: 0
         });

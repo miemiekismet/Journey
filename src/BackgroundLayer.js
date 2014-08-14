@@ -13,6 +13,7 @@ var BackgroundLayer = cc.Layer.extend({
     init:function () {
         this._super();
         var winsize = cc.director.getWinSize();
+
         cc.log("height" + winsize.height);
         cc.log("width" + winsize.width);
 

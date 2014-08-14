@@ -11,10 +11,10 @@ var FightScene = cc.Scene.extend({
 
 var FightLayer = cc.Layer.extend({
     mouse_down: false,
-    balls: null,
+    ball_board: null,
     cur_ball: null,
     move_count: 0,
-    score: 0,
+    score: null,
     ctor:function () {
         this._super();
         this.init();
@@ -25,52 +25,66 @@ var FightLayer = cc.Layer.extend({
         //Setting FightLayer size
         var winsize = cc.director.getWinSize();
         var padding = winsize.width / 40;
-        var user_info = UserData.create();
-        balls = new Array();
+        //var user_info = UserData.create();
+        ball_board = BallBoard.create(7, 7);
+        score = ScoreNum.create();
 
-        for (var i = 0; i < 7; i++) {
-            var ball_row = new Array();
-        	for (var j = 0; j < 7; j++) {
-                var cur_ball = FightBall.create(i, j, jtox(j), itoy(i));
-                this.addChild(cur_ball.ball);
-                ball_row.push(cur_ball);
-        	}
-            balls.push(ball_row);
-        }
-        //Place initial balls.
-        // if( 'touches' in cc.sys.capabilities )
-        //     cc.eventManager.addListener(cc.EventListener.create({
-        //         event: cc.EventListener.TOUCH_ALL_AT_ONCE,
-        //         onTouchesEnded:function (touches, event) {
-        //             if (touches.length <= 0)
-        //                 return;
-        //             event.getCurrentTarget().moveBall(touches[0].getLocation());
-        //         }
-        //     }), this);
-        // else
-        if ('mouse' in cc.sys.capabilities )
+        var that = this;
+        ball_board.each(function(obj) {
+            that.addChild(obj);
+        });
+        this.eliminateBalls(0);
+        
+        this.addChild(score.sprite);
+        if( 'touches' in cc.sys.capabilities )
+            cc.eventManager.addListener(cc.EventListener.create({
+                event: cc.EventListener.TOUCH_ALL_AT_ONCE,
+                onTouchesBegan:function (touches, event) {
+                    cc.log("#Detected touches down");
+                    var target = event.getCurrentTarget();
+                    target.mouse_down = true;
+                    var num = target.board().fallIn(touches[0].getLocation());
+                    target.cur_ball = target.board().ball(num["i"],num["j"]);
+                }
+            }), this);
+        else if ('mouse' in cc.sys.capabilities)
             cc.eventManager.addListener({
                 event: cc.EventListener.MOUSE,
                 onMouseDown: function (event) {
                     cc.log("#Detected mouse down");
                     var target = event.getCurrentTarget();
                     target.mouse_down = true;
-                    var num = target.fallIn(event.getLocation());
-                    // target.ball_positions;
-                    // target.balls;
-                    target.cur_ball = target.pickBall(num["i"],num["j"]);
+                    var num = target.board().fallIn(event.getLocation());
+                    target.cur_ball = target.board().ball(num["i"],num["j"]);
                 }
             }, this);
-        if ('mouse' in cc.sys.capabilities )
+
+        if( 'touches' in cc.sys.capabilities )
+            cc.eventManager.addListener(cc.EventListener.create({
+                event: cc.EventListener.TOUCH_ALL_AT_ONCE,
+                onTouchesEnded:function (touches, event) {
+                    cc.log("#Detected touches up");
+                    //1.End ball moving
+                    var target = event.getCurrentTarget();
+                    target.moveBall(target.cur_ball.ball,
+                        cc.p(jtox(target.cur_ball.j), itoy(target.cur_ball.i)),
+                        DEFAULT_SPEED);
+                    target.mouse_down = false;
+                    target.cur_ball = null;
+                    //2.Start elimination
+                    var total_combo = 0;
+                    target.eliminateBalls(total_combo);
+                }
+            }), this);
+        else if ('mouse' in cc.sys.capabilities)
             cc.eventManager.addListener({
                 event: cc.EventListener.MOUSE,
                 onMouseUp: function (event) {
                     cc.log("#Detected mouse up");
                     //1.End ball moving
                     var target = event.getCurrentTarget();
-                    var cur_section = target.fallIn(location);
                     target.moveBall(target.cur_ball.ball,
-                        new cc.Point(jtox(target.cur_ball.j), itoy(target.cur_ball.i)),
+                        cc.p(jtox(target.cur_ball.j), itoy(target.cur_ball.i)),
                         DEFAULT_SPEED);
                     target.mouse_down = false;
                     target.cur_ball = null;
@@ -79,7 +93,36 @@ var FightLayer = cc.Layer.extend({
                     target.eliminateBalls(total_combo);
                 }
             }, this);
-        if ('mouse' in cc.sys.capabilities )
+        
+        if( 'touches' in cc.sys.capabilities )
+            cc.eventManager.addListener(cc.EventListener.create({
+                event: cc.EventListener.TOUCH_ALL_AT_ONCE,
+                onTouchesMoved:function (touches, event) {
+                    var target = event.getCurrentTarget();
+                    if(target.mouse_down) {
+                        //Move the ball in hand.
+                        var location = touches[0].getLocation();
+                        if (target.board().inBoard(location)) {
+                            target.moveBall(target.cur_ball.ball, location, DEFAULT_SPEED);
+                        }
+                        else {
+                            return;
+                        }
+                        var cur_section = target.board().fallIn(location);
+                        //If touch other ball, move the other ball to cur_ball's place.
+                        if (cur_section["i"] != target.cur_ball.i || cur_section["j"] != target.cur_ball.j) {
+                            var infected_ball = target.board().ball(cur_section["i"], cur_section["j"]).ball;
+                            target.moveBall(infected_ball,
+                                cc.p(jtox(target.cur_ball.j), itoy(target.cur_ball.i)),
+                                DEFAULT_SPEED);
+                            target.board().swapBalls(target.cur_ball.i, target.cur_ball.j,
+                                cur_section["i"], cur_section["j"]);
+                        }
+                        //cc.log("#Detected mouse moving: (" + location.x + ", " + location.y + ")");
+                    }
+                }
+            }), this);
+        else if ('mouse' in cc.sys.capabilities)
             cc.eventManager.addListener({
                 event: cc.EventListener.MOUSE,
                 onMouseMove: function (event) {
@@ -87,20 +130,21 @@ var FightLayer = cc.Layer.extend({
                     if(target.mouse_down) {
                         //Move the ball in hand.
                         var location = event.getLocation();
-                        if (target.inBoard(location)) {
+                        if (target.board().inBoard(location)) {
                             target.moveBall(target.cur_ball.ball, location, DEFAULT_SPEED);
                         }
                         else {
                             return;
                         }
-                        var cur_section = target.fallIn(location);
+                        var cur_section = target.board().fallIn(location);
                         //If touch other ball, move the other ball to cur_ball's place.
                         if (cur_section["i"] != target.cur_ball.i || cur_section["j"] != target.cur_ball.j) {
-                            var infected_ball = target.pickBall(cur_section["i"], cur_section["j"]).ball;
+                            var infected_ball = target.board().ball(cur_section["i"], cur_section["j"]).ball;
                             target.moveBall(infected_ball,
-                                new cc.Point(jtox(target.cur_ball.j), itoy(target.cur_ball.i)),
+                                cc.p(jtox(target.cur_ball.j), itoy(target.cur_ball.i)),
                                 DEFAULT_SPEED);
-                            target.swapBalls(target.cur_ball.i, target.cur_ball.j, cur_section["i"], cur_section["j"]);
+                            target.board().swapBalls(target.cur_ball.i, target.cur_ball.j,
+                                cur_section["i"], cur_section["j"]);
                         }
                         //cc.log("#Detected mouse moving: (" + location.x + ", " + location.y + ")");
                     }
@@ -108,38 +152,35 @@ var FightLayer = cc.Layer.extend({
             }, this);
         
     },
-    moveBall: function(sprite, position, speed, target, callback) {
+    board: function() {
+        return ball_board;
+    },
+    moveBall: function(sprite, position, speed, on_complete) {
         sprite.stopAllActions();
-        var move = cc.MoveTo.create(speed, position);
-        if(arguments.length == 5) {
-            //var onComplete = cc.CallFunc.create(callback, target, position);
-            var onComplete = cc.CallFunc.create(callback, target);
-            sprite.runAction(cc.Sequence.create(move, onComplete));
+        var move_ball = cc.MoveTo.create(speed, position);
+        if(arguments.length == 4) {
+            sprite.runAction(cc.Sequence.create(move_ball, on_complete));
         }
         else {
-            sprite.runAction(move);
+            sprite.runAction(move_ball);
         }
     },
-    inBoard: function(location) {
-        return (location.x > 343 && location.x < 790 && location.y > 10 && location.y< 470);
-    },
-    fallIn: function(location) {
-        var j = xtoj(location.x);
-        var i = ytoi(location.y);
-        cc.log("#fall In i: " + i + " j: " + j);
-        return {"i": i, "j": j};
-    },
-    pickBall: function(i, j) {
-        return balls[i][j];
-    },
-    swapBalls: function(i, j, k, l) {
-        var tmp = balls[i][j];
-        tmp.i = k;
-        tmp.j = l;
-        balls[i][j] = balls[k][l];
-        balls[i][j].i = i;
-        balls[i][j].j = j;
-        balls[k][l] = tmp;
+    showCombo: function(num, pos) {
+        var combo_num = ComboNum.create(num, pos);
+        combo_num.sprite.setOpacity(0);
+        this.addChild(combo_num.sprite);
+
+        var show = cc.fadeIn(0.15);
+        var hold = cc.fadeTo(0.45, 255);
+        var disappear = cc.fadeOut(0.15);
+        var that = this;
+        var on_complete = cc.CallFunc.create(
+            function(_, obj) {
+                that.removeChild(obj);
+            },
+            this, combo_num.sprite);
+        
+        combo_num.sprite.runAction(cc.Sequence.create(show, hold, disappear, on_complete));
     },
     eliminateBalls: function(total_combo) {
         var count = 1;
@@ -147,16 +188,16 @@ var FightLayer = cc.Layer.extend({
         //Mark balls from row
         for(var row = 0; row < 7; row++) {
             for(var col = 1; col < 7; col++) {
-                if(balls[row][col].color == balls[row][col - 1].color) {
+                if(ball_board.ball(row, col).color == ball_board.ball(row, col - 1).color) {
                     count++;
                     //Mark group, assign later.
                     if(count == 3) {
-                        balls[row][col - 2].group = 0;
-                        balls[row][col - 1].group = 0;
-                        balls[row][col].group = 0;
+                        ball_board.ball(row, col - 2).group = 0;
+                        ball_board.ball(row, col - 1).group = 0;
+                        ball_board.ball(row, col).group = 0;
                     }
                     if(count > 3) {
-                        balls[row][col].group = 0;
+                        ball_board.ball(row, col).group = 0;
                     }
                 }
                 else{
@@ -169,16 +210,16 @@ var FightLayer = cc.Layer.extend({
         //Mark balls from column
         for(var col = 0; col < 7; col++) {
             for(var row = 1; row < 7; row++) {
-                if(balls[row][col].color == balls[row - 1][col].color) {
+                if(ball_board.ball(row, col).color == ball_board.ball(row - 1, col).color) {
                     count++;
                     //Mark group, assign later.
                     if(count == 3) {
-                        balls[row - 2][col].group = 0;
-                        balls[row - 1][col].group = 0;
-                        balls[row][col].group = 0;
+                        ball_board.ball(row - 2, col).group = 0;
+                        ball_board.ball(row - 1, col).group = 0;
+                        ball_board.ball(row, col).group = 0;
                     }
                     if(count > 3) {
-                        balls[row][col].group = 0;
+                        ball_board.ball(row, col).group = 0;
                     }
                 }
                 else{
@@ -194,81 +235,75 @@ var FightLayer = cc.Layer.extend({
         //Assign combo group to balls
         for(var row = 0; row < 7; row++) {
             for(var col = 0; col < 7; col++) {
-                if(balls[row][col].group == 0) {
+                if(ball_board.ball(row, col).group == 0) {
                     var combo_group = new Array();
-                    balls[row][col].group = group++;
-                    queue.push(balls[row][col]);
-                    combo_group.push(balls[row][col]);
+                    ball_board.ball(row, col).group = group++;
+                    queue.push(ball_board.ball(row, col));
+                    combo_group.push(ball_board.ball(row, col));
                     while(queue.length != 0) {
                         var elem = queue.shift();
-                        if (elem.i < 6 && balls[elem.i + 1][elem.j].color == elem.color
-                            && balls[elem.i + 1][elem.j].group == 0) {
-                            balls[elem.i + 1][elem.j].group = elem.group;
-                            queue.push(balls[elem.i + 1][elem.j]);
-                            combo_group.push(balls[elem.i + 1][elem.j]);
+                        if (elem.i < 6 && ball_board.ball(elem.i + 1, elem.j).color == elem.color
+                            && ball_board.ball(elem.i + 1, elem.j).group == 0) {
+                            ball_board.ball(elem.i + 1, elem.j).group = elem.group;
+                            queue.push(ball_board.ball(elem.i + 1, elem.j));
+                            combo_group.push(ball_board.ball(elem.i + 1, elem.j));
                         }
-                        if (elem.j < 6 && balls[elem.i][elem.j + 1].color == elem.color
-                            && balls[elem.i][elem.j + 1].group == 0) {
-                            balls[elem.i][elem.j + 1].group = elem.group;
-                            queue.push(balls[elem.i][elem.j + 1]);
-                            combo_group.push(balls[elem.i][elem.j + 1]);
+                        if (elem.j < 6 && ball_board.ball(elem.i, elem.j + 1).color == elem.color
+                            && ball_board.ball(elem.i, elem.j + 1).group == 0) {
+                            ball_board.ball(elem.i, elem.j + 1).group = elem.group;
+                            queue.push(ball_board.ball(elem.i, elem.j + 1));
+                            combo_group.push(ball_board.ball(elem.i, elem.j + 1));
                         }
-                        if (elem.j > 0 && balls[elem.i][elem.j - 1].color == elem.color
-                            && balls[elem.i][elem.j - 1].group == 0) {
-                            balls[elem.i][elem.j - 1].group = elem.group;
-                            queue.push(balls[elem.i][elem.j - 1]);
-                            combo_group.push(balls[elem.i][elem.j - 1]);
+                        if (elem.j > 0 && ball_board.ball(elem.i, elem.j - 1).color == elem.color
+                            && ball_board.ball(elem.i, elem.j - 1).group == 0) {
+                            ball_board.ball(elem.i, elem.j - 1).group = elem.group;
+                            queue.push(ball_board.ball(elem.i, elem.j - 1));
+                            combo_group.push(ball_board.ball(elem.i, elem.j - 1));
                         }
                     }
                     combo_groups.push(combo_group);
                 }
             }
         }
-        //Print
+        //Debug: print group of each ball
         for(var row = 0; row < 7; row++) {
-            cc.log(row + ": "+ balls[row][0].group + " "
-                + balls[row][1].group + " "
-                + balls[row][2].group + " "
-                + balls[row][3].group + " "
-                + balls[row][4].group + " "
-                + balls[row][5].group + " "
-                + balls[row][6].group);
+            cc.log(row + ": "+ ball_board.ball(row, 0).group + " "
+                + ball_board.ball(row, 1).group + " "
+                + ball_board.ball(row, 2).group + " "
+                + ball_board.ball(row, 3).group + " "
+                + ball_board.ball(row, 4).group + " "
+                + ball_board.ball(row, 5).group + " "
+                + ball_board.ball(row, 6).group);
         }
         //Eliminate balls
         while(combo_groups.length != 0) {
             combo++;
             total_combo++;
             var a_group = combo_groups.shift();
-            this.score += a_group[0].group * 100 * a_group.length;
-            this.addChild(ComboNum.create(total_combo, new cc.Point(jtox(a_group[0].j), itoy(a_group[0].i))));
+            score.addScore(a_group[0].group * 100 * a_group.length);
+            this.showCombo(total_combo, cc.p(jtox(a_group[0].j), itoy(a_group[0].i)));
             while(a_group.length != 0) {
                 var ball = a_group.shift();
                 this.removeChild(ball.ball);
-                ball.reset();
+                ball_board.deleteBall(ball.i, ball.j)
             }
         }
         //Falling~
         for(var col = 0; col < 7; col++) {
             var null_count = 7;
             for(var row = 6; row >= 0; row--) {
-                if(balls[row][col].ball != null) {
+                if(ball_board.ball(row,col).ball != null) {
                     null_count--;
                     if(null_count != row) {
                         this.move_count++;
+                        var on_complete = cc.CallFunc.create(this.onMoveComplete, this, total_combo);
                         //cc.log("Move: " + row + ", " + col + ". " + this.move_count);
-                        this.moveBall(balls[row][col].ball,
-                            new cc.Point(jtox(col), itoy(null_count)),
+                        this.moveBall(ball_board.ball(row,col).ball,
+                            cc.p(jtox(col), itoy(null_count)),
                             SLOW_SPEED,
-                            this,
-                            function() {
-                            //function(_, position) {
-                                this.move_count--;
-                                //cc.log("Move: " + ytoi(position.y) + ", " + xtoj(position.x) + ". " + this.move_count);
-                                if(this.move_count == 0) {
-                                        this.eliminateBalls(total_combo);
-                            }
-                        });
-                        this.swapBalls(row, col, null_count, col);
+                            on_complete
+                        );
+                        ball_board.swapBalls(row, col, null_count, col);
                     }
                 }
             }
@@ -276,42 +311,29 @@ var FightLayer = cc.Layer.extend({
         //Refill balls
         for(var row = 0; row < 7; row++) {
             for(var col = 0; col < 7; col++) {
-                if(balls[row][col].ball == null) {
-                    balls[row][col] = FightBall.create(row, col, jtox(col), itoy(-2));
-                    this.addChild(balls[row][col].ball);
-                    this.moveBall(balls[row][col].ball,
-                            new cc.Point(jtox(col), itoy(row)),
-                            SLOW_SPEED);
+                if(ball_board.ball(row,col).ball == null) {
+                    ball_board.createBall(row, col, jtox(col), itoy(-2));
+                    this.addChild(ball_board.ball(row,col).ball);
+                    this.move_count++;
+                    var on_complete = cc.CallFunc.create(this.onMoveComplete, this, total_combo);
+                    this.moveBall(ball_board.ball(row,col).ball,
+                            cc.p(jtox(col), itoy(row)),
+                            SLOW_SPEED,
+                            on_complete);
                 }
             }
+        }
+    },
+    onMoveComplete: function(_, total_combo) {
+        //function(_, position) {
+        this.move_count--;
+        //cc.log("Move: " + ytoi(position.y) + ", " + xtoj(position.x) + ". " + this.move_count);
+        if(this.move_count == 0) {
+            this.eliminateBalls(total_combo);
         }
     }
 
 });
-
-var FightBall = function() {
-    this.i = -1;
-    this.j = -1;
-    this.color = "";
-    this.ball = null;
-    //for elimination group number
-    this.group = -1;
-    this.reset = function() {
-        this.color = "";
-        delete this.ball;
-        this.ball = null;
-        this.group = -1;
-    }
-}
-FightBall.create = function(i, j, posx, posy) {
-    var new_ball = new FightBall();
-    new_ball.i = i;
-    new_ball.j = j;
-    new_ball.color = Math.floor(Math.random()*100%6);
-    new_ball.ball = cc.Sprite.create(ball_name[new_ball.color]);
-    new_ball.ball.attr({x: posx, y: posy, anchorX: 0.5, anchorY: 0.5});
-    return new_ball;
-}
 
 var ComboNum = function() {
     this.num = -1;
@@ -324,20 +346,22 @@ ComboNum.create = function (num, position) {
     new_combo.sprite.attr({x: position.x, y: position.y, anchorX: 0.5, anchorY: 0.5});
     return new_combo;
 }
-//Calculation tools
-var itoy = function(i) {
-    return 480 - 28 - i * 16 * 4 - 18;
+
+var ScoreNum = function() {
+    this.num = -1;
+    this.sprite = null;
+    this.addScore = function(add) {
+        this.num += add;
+        this.sprite.setString(this.num.toString());
+    };
 }
-var jtox = function(j) {
-    return 23 * 16 + j * 16 * 4 + 15;
+ScoreNum.create = function () {
+    var new_score = new ScoreNum();
+    new_score.num = 0;
+    new_score.sprite = cc.LabelTTF.create(new_score.num.toString(), "Arial", 40);
+    new_score.sprite.attr({x: 55, y: 395, anchorX: 0, anchorY: 0});
+    return new_score;
 }
-var ytoi = function(y) {
-    var re = (480 - 28 - 18 - y) / (16 * 4) - Math.floor((480 - 28 - 18 - y) / (16 * 4));
-    return Math.floor((480 - 28 - 18 - y) / (16 * 4)) + (re < 0.5 ? 0 : 1);
-}
-var xtoj = function(x) {
-    var re = (x - 15 - 23 * 16) / (16 * 4) - Math.floor((x - 15 - 23 * 16) / (16 * 4));
-    return Math.floor((x - 15 - 23 * 16) / (16 * 4)) + (re < 0.5 ? 0 : 1);
-}
+
 var DEFAULT_SPEED = 0.001;
-var SLOW_SPEED = 0.3;
+var SLOW_SPEED = 0.4;

@@ -1,6 +1,5 @@
 
 var WelcomeLayer = cc.Layer.extend({
-    sprite:null,
     ctor:function () {
         //Init
         this._super();
@@ -17,10 +16,24 @@ var WelcomeLayer = cc.Layer.extend({
 
         //Menu
         cc.log("#Setting Menu");
+        var startOverLabel = cc.LabelTTF.create("StartOver", "Arial", 30);
         var startLabel = cc.LabelTTF.create("Start", "Arial", 30);
         var exitLabel = cc.LabelTTF.create("Exit", "Arial", 30);
 
-        // add a "close" icon to exit the progress. it's an autorelease object
+        var startOverItem = cc.MenuItemLabel.create(
+            startOverLabel,
+            function () {
+                cc.log("@Start Over clicked");
+                alert("Game Data Cleared.");
+                cc.sys.localStorage.clear();
+            }, this);
+        startOverItem.attr({
+            x: size.width / 2,
+            y: size.height / 2 + startOverItem.height,
+            anchorX: 0.5,
+            anchorY: 0.5
+        });
+
         var startItem = cc.MenuItemLabel.create(
             startLabel,
             function () {
@@ -29,7 +42,7 @@ var WelcomeLayer = cc.Layer.extend({
             }, this);
         startItem.attr({
             x: size.width / 2,
-            y: size.height / 2,
+            y: size.height / 2 - startItem.height,
             anchorX: 0.5,
             anchorY: 0.5
         });
@@ -41,14 +54,15 @@ var WelcomeLayer = cc.Layer.extend({
             }, this);
         exitItem.attr({
             x: size.width / 2,
-            y: size.height / 2 - 2 * exitItem.height,
+            y: size.height / 2 - 3 * exitItem.height,
             anchorX: 0.5,
             anchorY: 0.5
         });
 
-        var menu = cc.Menu.create(startItem);
+        var menu = cc.Menu.create(startOverItem);
         menu.x = 0;
         menu.y = 0;
+        menu.addChild(startItem);
         menu.addChild(exitItem);
         this.addChild(menu, 1);
 
@@ -64,21 +78,6 @@ var WelcomeLayer = cc.Layer.extend({
         });
         this.addChild(spriteBG);
 
-//        // add "HelloWorld" splash screen"
-//        this.sprite = cc.Sprite.create(res.HelloWorld_png);
-//        this.sprite.attr({
-//            x: size.width / 2,
-//            y: size.height / 2,
-//            scale: 0.5,
-//            rotation: 180
-//        });
-//        this.addChild(this.sprite, 0);
-//
-//        var rotateToA = cc.RotateTo.create(2, 0);
-//        var scaleToA = cc.ScaleTo.create(2, 1, 1);
-//
-//        this.sprite.runAction(cc.Sequence.create(rotateToA, scaleToA));
-//        helloLabel.runAction(cc.Spawn.create(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)),cc.TintTo.create(2.5,255,125,0)));
         return true;
     }
 });
@@ -90,4 +89,3 @@ var WelcomeScene = cc.Scene.extend({
         this.addChild(layer);
     }
 });
-

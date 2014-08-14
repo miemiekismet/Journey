@@ -8,16 +8,21 @@
     "renderMode" : 0,
     "engineDir":"frameworks/cocos2d-html5",
 
-    "modules" : ["cocos2d"],
+    "modules" : ["cocos2d", "extensions"],
 
     "jsList" : [
         "src/resource.js",
         "src/app.js",
         "src/AnimationLayer.js",
         "src/BackgroundLayer.js",
+        "src/BallBoard.js",
+        "src/FightScene.js",
         "src/PlayScene.js",
         "src/BagScene.js",
+        "src/MarketScene.js",
         "src/StatusLayer.js",
-        "src/StaticData.js"
+        "src/StaticData.js",
+        "src/UserData.js",
+        "src/SystemData.js"
     ]
 }

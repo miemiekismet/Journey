@@ -1,6 +1,5 @@
 
 var WelcomeLayer = cc.Layer.extend({
-    sprite:null,
     ctor:function () {
         //Init
         this._super();
@@ -79,21 +78,6 @@ var WelcomeLayer = cc.Layer.extend({
         });
         this.addChild(spriteBG);
 
-//        // add "HelloWorld" splash screen"
-//        this.sprite = cc.Sprite.create(res.HelloWorld_png);
-//        this.sprite.attr({
-//            x: size.width / 2,
-//            y: size.height / 2,
-//            scale: 0.5,
-//            rotation: 180
-//        });
-//        this.addChild(this.sprite, 0);
-//
-//        var rotateToA = cc.RotateTo.create(2, 0);
-//        var scaleToA = cc.ScaleTo.create(2, 1, 1);
-//
-//        this.sprite.runAction(cc.Sequence.create(rotateToA, scaleToA));
-//        helloLabel.runAction(cc.Spawn.create(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)),cc.TintTo.create(2.5,255,125,0)));
         return true;
     }
 });
@@ -105,4 +89,3 @@ var WelcomeScene = cc.Scene.extend({
         this.addChild(layer);
     }
 });
-

@@ -15,6 +15,7 @@
         "src/app.js",
         "src/AnimationLayer.js",
         "src/BackgroundLayer.js",
+        "src/BallBoard.js",
         "src/FightScene.js",
         "src/PlayScene.js",
         "src/BagScene.js",

@@ -37,8 +37,8 @@ var StatusLayer = cc.Layer.extend({
     update: function() {
         var user_info = UserData.create();
         var sys_info = SystemData.create();
-        this.labelDay.setString("Days: " + sys_info.getDay(), "Helvetica", 20);
-        this.labelCoin.setString("Coins: " + user_info.getMoney(), "Helvetica", 20);
-        this.labelHealth.setString("Health: " + user_info.getHealth(), "Helvetica", 20);
+        this.labelDay.setString("Days: " + sys_info.getDay());
+        this.labelCoin.setString("Coins: " + user_info.getMoney());
+        this.labelHealth.setString("Health: " + user_info.getHealth());
     }
 });
