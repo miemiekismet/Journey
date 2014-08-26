@@ -25,17 +25,38 @@ var FightLayer = cc.Layer.extend({
         //Setting FightLayer size
         var winsize = cc.director.getWinSize();
         var padding = winsize.width / 40;
-        //var user_info = UserData.create();
-        ball_board = BallBoard.create(7, 7);
+        var user_info = UserData.create();
+
+        //Init balls and score
+        ball_board = BallBoard.create(5, 6);
         score = ScoreNum.create();
 
-        var that = this;
         ball_board.each(function(obj) {
-            that.addChild(obj);
-        });
+            this.addChild(obj);
+        }.bind(this));
         this.eliminateBalls(0);
-        
         this.addChild(score.sprite);
+
+        //Init exit button
+        var exit_label = cc.LabelTTF.create("Exit", "Arial", 20);
+        var exit_item = cc.MenuItemLabel.create(
+            exit_label,
+            function () {
+                cc.log("@Exit clicked");
+                cc.eventManager.removeAllListeners();
+                cc.director.runScene(new PlayScene());
+            },
+            this);
+        var exit_menu = cc.Menu.create(exit_item);
+        exit_menu.attr({
+            width: 50,
+            x: padding * 3,
+            y: padding * 3,
+            anchorX: 0,
+            anchorY: 0
+        });
+        this.addChild(exit_menu, 1);
+
         if( 'touches' in cc.sys.capabilities )
             cc.eventManager.addListener(cc.EventListener.create({
                 event: cc.EventListener.TOUCH_ALL_AT_ONCE,
@@ -168,16 +189,15 @@ var FightLayer = cc.Layer.extend({
     showCombo: function(num, pos) {
         var combo_num = ComboNum.create(num, pos);
         combo_num.sprite.setOpacity(0);
-        this.addChild(combo_num.sprite);
+        this.addChild(combo_num.sprite,2);
 
         var show = cc.fadeIn(0.15);
-        var hold = cc.fadeTo(0.45, 255);
+        var hold = cc.fadeTo(0.5, 255);
         var disappear = cc.fadeOut(0.15);
-        var that = this;
         var on_complete = cc.CallFunc.create(
             function(_, obj) {
-                that.removeChild(obj);
-            },
+                this.removeChild(obj);
+            }.bind(this),
             this, combo_num.sprite);
         
         combo_num.sprite.runAction(cc.Sequence.create(show, hold, disappear, on_complete));
@@ -186,8 +206,8 @@ var FightLayer = cc.Layer.extend({
         var count = 1;
         var combo = 0;
         //Mark balls from row
-        for(var row = 0; row < 7; row++) {
-            for(var col = 1; col < 7; col++) {
+        for(var row = 0; row < 5; row++) {
+            for(var col = 1; col < 6; col++) {
                 if(ball_board.ball(row, col).color == ball_board.ball(row, col - 1).color) {
                     count++;
                     //Mark group, assign later.
@@ -208,8 +228,8 @@ var FightLayer = cc.Layer.extend({
             count = 1;
         }
         //Mark balls from column
-        for(var col = 0; col < 7; col++) {
-            for(var row = 1; row < 7; row++) {
+        for(var col = 0; col < 6; col++) {
+            for(var row = 1; row < 5; row++) {
                 if(ball_board.ball(row, col).color == ball_board.ball(row - 1, col).color) {
                     count++;
                     //Mark group, assign later.
@@ -233,8 +253,8 @@ var FightLayer = cc.Layer.extend({
         var queue = new Array();
         var combo_groups = new Array();
         //Assign combo group to balls
-        for(var row = 0; row < 7; row++) {
-            for(var col = 0; col < 7; col++) {
+        for(var row = 0; row < 5; row++) {
+            for(var col = 0; col < 6; col++) {
                 if(ball_board.ball(row, col).group == 0) {
                     var combo_group = new Array();
                     ball_board.ball(row, col).group = group++;
@@ -242,13 +262,13 @@ var FightLayer = cc.Layer.extend({
                     combo_group.push(ball_board.ball(row, col));
                     while(queue.length != 0) {
                         var elem = queue.shift();
-                        if (elem.i < 6 && ball_board.ball(elem.i + 1, elem.j).color == elem.color
+                        if (elem.i < 4 && ball_board.ball(elem.i + 1, elem.j).color == elem.color
                             && ball_board.ball(elem.i + 1, elem.j).group == 0) {
                             ball_board.ball(elem.i + 1, elem.j).group = elem.group;
                             queue.push(ball_board.ball(elem.i + 1, elem.j));
                             combo_group.push(ball_board.ball(elem.i + 1, elem.j));
                         }
-                        if (elem.j < 6 && ball_board.ball(elem.i, elem.j + 1).color == elem.color
+                        if (elem.j < 5 && ball_board.ball(elem.i, elem.j + 1).color == elem.color
                             && ball_board.ball(elem.i, elem.j + 1).group == 0) {
                             ball_board.ball(elem.i, elem.j + 1).group = elem.group;
                             queue.push(ball_board.ball(elem.i, elem.j + 1));
@@ -266,14 +286,12 @@ var FightLayer = cc.Layer.extend({
             }
         }
         //Debug: print group of each ball
-        for(var row = 0; row < 7; row++) {
+        for(var row = 0; row < 5; row++) {
             cc.log(row + ": "+ ball_board.ball(row, 0).group + " "
                 + ball_board.ball(row, 1).group + " "
                 + ball_board.ball(row, 2).group + " "
                 + ball_board.ball(row, 3).group + " "
-                + ball_board.ball(row, 4).group + " "
-                + ball_board.ball(row, 5).group + " "
-                + ball_board.ball(row, 6).group);
+                + ball_board.ball(row, 4).group);
         }
         //Eliminate balls
         while(combo_groups.length != 0) {
@@ -289,9 +307,9 @@ var FightLayer = cc.Layer.extend({
             }
         }
         //Falling~
-        for(var col = 0; col < 7; col++) {
-            var null_count = 7;
-            for(var row = 6; row >= 0; row--) {
+        for(var col = 0; col < 5; col++) {
+            var null_count = 5;
+            for(var row = 4; row >= 0; row--) {
                 if(ball_board.ball(row,col).ball != null) {
                     null_count--;
                     if(null_count != row) {
@@ -309,14 +327,17 @@ var FightLayer = cc.Layer.extend({
             }
         }
         //Refill balls
-        for(var row = 0; row < 7; row++) {
-            for(var col = 0; col < 7; col++) {
+        for(var row = 0; row < 5; row++) {
+            for(var col = 0; col < 6; col++) {
                 if(ball_board.ball(row,col).ball == null) {
                     ball_board.createBall(row, col, jtox(col), itoy(-2));
                     this.addChild(ball_board.ball(row,col).ball);
+                    this.move_count++;
+                    var on_complete = cc.CallFunc.create(this.onMoveComplete, this, total_combo);
                     this.moveBall(ball_board.ball(row,col).ball,
                             cc.p(jtox(col), itoy(row)),
-                            SLOW_SPEED);
+                            SLOW_SPEED,
+                            on_complete);
                 }
             }
         }

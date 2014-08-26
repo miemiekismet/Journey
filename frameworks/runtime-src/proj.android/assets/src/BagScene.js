@@ -29,22 +29,22 @@ var BagLayer = cc.Layer.extend({
 
         //Drawing Bag Title
         cc.log("#Drawing Bag in Bag Scene");
-        var bag_title_label = cc.LabelTTF.create("Stocks", "Arial", 20);
-        var bag_title_item = cc.MenuItemLabel.create(bag_title_label, this);
-        bag_title_item.attr({
-            x: padding,
+        var bag_title_label = cc.LabelTTF.create("Barn", "Arial", 20);
+        bag_title_label.attr({
+            x: padding * 3,
             y: this.height - 2 * padding,
-            anchorX: 0,
-            anchorY: 0
+            anchorX: 0.5,
+            anchorY: 0.5
         });
-
-        var bag_list = cc.Menu.create(bag_title_item);
-
-        bag_list.attr({
-            x: padding,
-            y: padding,
-            anchorX: 0,
-            anchorY: 0});
+        var bag_title_bg = cc.Sprite.create(res.bg_title_png);
+        bag_title_bg.attr({
+            x: padding * 3,
+            y: this.height - 2 * padding,
+            anchorX: 0.5,
+            anchorY: 0.5
+        });
+        this.addChild(bag_title_label, 2);
+        this.addChild(bag_title_bg, 1);
 
         //Drawing Bag Content
         var i = 0;
@@ -52,16 +52,30 @@ var BagLayer = cc.Layer.extend({
             cc.log("Stock:");
             cc.log(goods_name[i]);
             cc.log(user_info.getStock(i));
-            var stock_label = cc.LabelTTF.create(goods_name[i] + "     " + user_info.getStock(i), "Arial", 15);
-            var stock_item = cc.MenuItemLabel.create(stock_label, this);
-            stock_item.attr({
-                width: 50,
-                x: padding,
-                y: this.height - stock_item.height * (i + 1)  - padding * (i + 3),
+            var stock_img = cc.Sprite.create(goods_img[i]);
+            stock_img.attr({
+                x: padding * 2,
+                y: this.height - stock_img.height * (i + 1)  - padding * (i + 4),
                 anchorX: 0,
                 anchorY: 0
             });
-            bag_list.addChild(stock_item);
+            var stock_label = cc.LabelTTF.create(goods_name[i], "Arial", 15);
+            stock_label.attr({
+                x: stock_img.getPositionX() + stock_img.getContentSize().width + padding,
+                y: stock_img.getPositionY(),
+                anchorX: 0,
+                anchorY: 0
+            });
+            var stock_price_label = cc.LabelTTF.create(" " + user_info.getStock(i), "Arial", 15);
+            stock_price_label.attr({
+                x: padding * 12,
+                y: stock_img.getPositionY(),
+                anchorX: 0,
+                anchorY: 0
+            });
+            this.addChild(stock_img, 1);
+            this.addChild(stock_label, 1);
+            this.addChild(stock_price_label, 1);
             i++;
         }
         //Drawing Exit Btn
@@ -75,13 +89,11 @@ var BagLayer = cc.Layer.extend({
             this);
         var exit_menu = cc.Menu.create(exit_item);
         exit_menu.attr({
-            width: 50,
-            x: padding * 3,
-            y: padding * 3,
-            anchorX: 0,
-            anchorY: 0
+            x: padding * 10,
+            y: this.height - 2 * padding,
+            anchorX: 0.5,
+            anchorY: 0.5
         });
-        this.addChild(bag_list, 1);
         this.addChild(exit_menu, 1);
     }
 });

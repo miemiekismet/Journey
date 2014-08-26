@@ -5,12 +5,21 @@
 var goods_num = 6;
 
 var goods_name = {
-    0: "aaa",
-    1: "bbb",
-    2: "ccc",
-    3: "ddd",
-    4: "eee",
-    5: "fff"
+    0: "Bread",
+    1: "Candle",
+    2: "Woods",
+    3: "Book",
+    4: "Painting",
+    5: "Mystery Water"
+};
+
+var goods_img = {
+    0: res.good_bread_png,
+    1: res.good_candle_png,
+    2: res.good_woods_png,
+    3: res.good_book_png,
+    4: res.good_painting_png,
+    5: res.good_mystery_water_png
 };
 
 var goods_price_bottom = {

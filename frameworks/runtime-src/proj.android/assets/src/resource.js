@@ -1,7 +1,31 @@
 var res = {
+    //backgrounds
     bg_open_jpg : "res/bg_open.jpg",
-    bg_menu_1_png: "res/menu_1.png",
+    bg_menu_1_png : "res/menu_1.png",
     bg_bag_png : "res/bag.png",
+    bg_status_png : "res/bg_status.png",
+    bg_title_png : "res/bg_title.png",
+    bg_single_good_png : "res/bg_single_good.png",
+    
+    //buttons
+    btn_barn_unclicked_png : "res/barn_unclicked.png",
+    btn_barn_clicked_png : "res/barn_clicked.png",
+    btn_market_unclicked_png : "res/market_unclicked.png",
+    btn_market_clicked_png : "res/market_clicked.png",
+    btn_next_city_unclicked_png : "res/next_city_unclicked.png",
+    btn_next_city_clicked_png : "res/next_city_clicked.png",
+    btn_buy_unclicked_png : "res/btn_buy_unclicked.png",
+    btn_buy_clicked_png : "res/btn_buy_clicked.png",
+
+    //goods
+    good_bread_png: "res/good_bread.png",
+    good_candle_png: "res/good_candle.png",
+    good_book_png: "res/good_book.png",
+    good_painting_png: "res/good_painting.png",
+    good_woods_png: "res/good_woods.png",
+    good_mystery_water_png: "res/good_mystery_water.png",
+
+
     //for fight scene
     bg_fight_png : "res/ball_background.png",
     red_ball_png : "res/red_ball.png",
@@ -45,18 +69,38 @@ var res = {
 
     //
     player_png : "res/runner.png",
-    city_1_tmx: "res/city_1.tmx",
-    xxx: "res/Environment-3.png"
+    city_1_tmx : "res/city_1.tmx",
+    xxx : "res/Environment-3.png",
+    change_day_mask_png : "res/change_day_mask.png"
 };
 
 var g_resources = [
     //image
     res.bg_open_jpg,
     res.bg_bag_png,
+    res.bg_status_png,
+    res.bg_title_png,
+    res.bg_single_good_png,
     res.player_png,
     res.bg_menu_1_png,
     res.bg_fight_png,
     res.xxx,
+    //buttons
+    res.btn_barn_unclicked_png,
+    res.btn_barn_clicked_png,
+    res.btn_market_unclicked_png,
+    res.btn_market_clicked_png,
+    res.btn_next_city_unclicked_png,
+    res.btn_next_city_clicked_png,
+    res.btn_buy_unclicked_png,
+    res.btn_buy_clicked_png,
+    //goods
+    res.good_bread_png,
+    res.good_candle_png,
+    res.good_book_png,
+    res.good_painting_png,
+    res.good_woods_png,
+    res.good_mystery_water_png,
     //balls
     res.red_ball_png,
     res.blue_ball_png,
@@ -103,8 +147,9 @@ var g_resources = [
     //fnt
 
     //tmx
-    res.city_1_tmx
+    res.city_1_tmx,
     //bgm
 
     //effect
+    res.change_day_mask_png
 ];

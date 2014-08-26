@@ -4,10 +4,10 @@ var BallBoard = function() {
 	this.board = null;
 	//Balls on the board
 	this.balls = null;
-	//Rows default value is 7
-	this.row = 7;
-	//Column default value is 7
-	this.column = 7;
+	//Rows default value is 5
+	this.row = 5;
+	//Column default value is 6
+	this.column = 6;
 
 	//Methods:
 	//Do operation on each ball
@@ -31,7 +31,7 @@ var BallBoard = function() {
     };
     //Determine whether the position is inside the board *
     this.inBoard = function(location) {
-        return (location.x > 343 && location.x < 790 && location.y > 10 && location.y< 470);
+        return (location.x > 286 && location.x < 750 && location.y > 50 && location.y< 430);
     };
     //Pick ball in specific block
     this.ball = function(i, j) {
@@ -97,16 +97,16 @@ FightBall.create = function(i, j, posx, posy) {
 
 //Calculation tools
 var itoy = function(i) {
-    return 480 - 28 - i * 16 * 4 - 18;
+    return 480 - 72 - i * 84;
 }
 var jtox = function(j) {
-    return 23 * 16 + j * 16 * 4 + 15;
+    return 16 * 16 + j * 84 + 59;
 }
 var ytoi = function(y) {
-    var re = (480 - 28 - 18 - y) / (16 * 4) - Math.floor((480 - 28 - 18 - y) / (16 * 4));
-    return Math.floor((480 - 28 - 18 - y) / (16 * 4)) + (re < 0.5 ? 0 : 1);
+    var re = (480 - 72 - y) / 84 - Math.floor((480 - 72 - y) / 84);
+    return Math.floor((480 - 72 - y) / 84) + (re < 0.5 ? 0 : 1);
 }
 var xtoj = function(x) {
-    var re = (x - 15 - 23 * 16) / (16 * 4) - Math.floor((x - 15 - 23 * 16) / (16 * 4));
-    return Math.floor((x - 15 - 23 * 16) / (16 * 4)) + (re < 0.5 ? 0 : 1);
+    var re = (x - 59 - 16 * 16) / 84 - Math.floor((x - 59 - 16 * 16) / 84);
+    return Math.floor((x - 59 - 16 * 16) / 84) + (re < 0.5 ? 0 : 1);
 }

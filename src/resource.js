@@ -1,7 +1,39 @@
 var res = {
+    //backgrounds
     bg_open_jpg : "res/bg_open.jpg",
-    bg_menu_1_png: "res/menu_1.png",
-    bg_bag_png : "res/bag.png",
+    bg_menu_1_png : "res/menu_1.png",
+    bg_barn_png : "res/bg_barn.png",
+    bg_market_png : "res/bg_market.png",
+    bg_status_png : "res/bg_status.png",
+    bg_title_png : "res/bg_title.png",
+    bg_dialog_png : "res/bg_dialog.png",
+    bg_single_good_png : "res/bg_single_good.png",
+    
+    //buttons
+    btn_exit_unclicked_png : "res/btn_exit_unclicked.png",
+    btn_exit_clicked_png : "res/btn_exit_clicked.png",
+    btn_barn_unclicked_png : "res/barn_unclicked.png",
+    btn_barn_clicked_png : "res/barn_clicked.png",
+    btn_market_unclicked_png : "res/market_unclicked.png",
+    btn_market_clicked_png : "res/market_clicked.png",
+    btn_next_city_unclicked_png : "res/next_city_unclicked.png",
+    btn_next_city_clicked_png : "res/next_city_clicked.png",
+    btn_buy_unclicked_png : "res/btn_buy_unclicked.png",
+    btn_buy_clicked_png : "res/btn_buy_clicked.png",
+    btn_sell_unclicked_png : "res/btn_sell_unclicked.png",
+    btn_sell_clicked_png : "res/btn_sell_clicked.png",
+    btn_plus_png : "res/btn_plus.png",
+    btn_minus_png : "res/btn_minus.png",
+    btn_plus_minus_disabled_png : "res/btn_plus_minus_disabled.png",
+
+    //goods
+    good_bread_png: "res/good_bread.png",
+    good_candle_png: "res/good_candle.png",
+    good_book_png: "res/good_book.png",
+    good_painting_png: "res/good_painting.png",
+    good_woods_png: "res/good_woods.png",
+    good_mystery_water_png: "res/good_mystery_water.png",
+
     //for fight scene
     bg_fight_png : "res/ball_background.png",
     red_ball_png : "res/red_ball.png",
@@ -11,6 +43,18 @@ var res = {
     silver_ball_png : "res/silver_ball.png",
     peach_ball_png : "res/peach_ball.png",
     null_ball_png : "res/null_ball.png",
+
+    monster_slime_png : "res/monster_slime.png",
+    monster_sagma_png : "res/monster_sagma.png",
+    monster_ghast_png : "res/monster_ghast.png",
+    monster_silverfish_png : "res/monster_silverfish.png",
+    monster_creeper_png : "res/monster_silverfish.png",
+    monster_zombie_png : "res/monster_zombie.png",
+    monster_witch_png : "res/monster_witch.png",
+    monster_blaze_png : "res/monster_blaze.png",
+    monster_skeleton_png : "res/monster_skeleton.png",
+    monster_cat_png : "res/monster_cat.png",
+
 
     combo_1_png : "res/1_combo.png",
     combo_2_png : "res/2_combo.png",
@@ -43,20 +87,50 @@ var res = {
     combo_29_png : "res/29_combo.png",
     combo_30_png : "res/30_combo.png",
 
-    //
+    //other
     player_png : "res/runner.png",
-    city_1_tmx: "res/city_1.tmx",
-    xxx: "res/Environment-3.png"
+    city_1_tmx : "res/city_1.tmx",
+    xxx : "res/Environment-3.png",
+    change_day_mask_png : "res/change_day_mask.png"
 };
 
 var g_resources = [
     //image
     res.bg_open_jpg,
-    res.bg_bag_png,
+    res.bg_barn_png,
+    res.bg_market_png,
+    res.bg_status_png,
+    res.bg_title_png,
+    res.bg_dialog_png,
+    res.bg_single_good_png,
     res.player_png,
     res.bg_menu_1_png,
     res.bg_fight_png,
     res.xxx,
+    //buttons
+    res.btn_exit_unclicked_png,
+    res.btn_exit_clicked_png,
+    res.btn_barn_unclicked_png,
+    res.btn_barn_clicked_png,
+    res.btn_market_unclicked_png,
+    res.btn_market_clicked_png,
+    res.btn_next_city_unclicked_png,
+    res.btn_next_city_clicked_png,
+    res.btn_buy_unclicked_png,
+    res.btn_buy_clicked_png,
+    res.btn_sell_unclicked_png,
+    res.btn_sell_clicked_png,
+    res.btn_plus_png,
+    res.btn_minus_png,
+    res.btn_plus_minus_disabled_png,
+    //goods
+    res.good_bread_png,
+    res.good_candle_png,
+    res.good_book_png,
+    res.good_painting_png,
+    res.good_woods_png,
+    res.good_mystery_water_png,
+
     //balls
     res.red_ball_png,
     res.blue_ball_png,
@@ -65,6 +139,18 @@ var g_resources = [
     res.silver_ball_png,
     res.peach_ball_png,
     res.null_ball_png,
+
+    //monsters
+    res.monster_slime_png,
+    res.monster_sagma_png,
+    res.monster_ghast_png,
+    res.monster_silverfish_png,
+    res.monster_creeper_png,
+    res.monster_zombie_png,
+    res.monster_witch_png,
+    res.monster_blaze_png,
+    res.monster_skeleton_png,
+    res.monster_cat_png,
 
     //combos
     res.combo_1_png,
@@ -103,8 +189,9 @@ var g_resources = [
     //fnt
 
     //tmx
-    res.city_1_tmx
+    res.city_1_tmx,
     //bgm
 
     //effect
+    res.change_day_mask_png
 ];

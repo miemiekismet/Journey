@@ -89,3 +89,7 @@ var WelcomeScene = cc.Scene.extend({
         this.addChild(layer);
     }
 });
+
+cc.log = function(msg){
+    //do nothing;
+}

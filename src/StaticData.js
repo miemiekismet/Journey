@@ -5,12 +5,21 @@
 var goods_num = 6;
 
 var goods_name = {
-    0: "aaa",
-    1: "bbb",
-    2: "ccc",
-    3: "ddd",
-    4: "eee",
-    5: "fff"
+    0: "Bread",
+    1: "Candle",
+    2: "Woods",
+    3: "Book",
+    4: "Painting",
+    5: "Mystery Water"
+};
+
+var goods_img = {
+    0: res.good_bread_png,
+    1: res.good_candle_png,
+    2: res.good_woods_png,
+    3: res.good_book_png,
+    4: res.good_painting_png,
+    5: res.good_mystery_water_png
 };
 
 var goods_price_bottom = {
@@ -45,7 +54,8 @@ var city_map_name = {
 
 var pic_map_name = {
     0: res.bg_open_jpg,
-    2: res.bg_bag_png,
+    2: res.bg_barn_png,
+    3: res.bg_market_png,
     4: res.bg_fight_png
 };
 
@@ -89,4 +99,30 @@ var combo_name = {
     28: res.combo_28_png,
     29: res.combo_29_png,
     30: res.combo_30_png
+};
+
+var monster_name = {
+    0: "Slime",
+    1: "Sagma",
+    2: "Ghast",
+    3: "SilverFish",
+    4: "Creeper",
+    5: "Zombie",
+    6: "Witch",
+    7: "Blaze",
+    8: "Skeleton",
+    9: "Cat"
+};
+
+var monster_image = {
+    0: res.monster_slime_png,
+    1: res.monster_sagma_png,
+    2: res.monster_ghast_png,
+    3: res.monster_silverfish_png,
+    4: res.monster_creeper_png,
+    5: res.monster_zombie_png,
+    6: res.monster_witch_png,
+    7: res.monster_blaze_png,
+    8: res.monster_skeleton_png,
+    9: res.monster_cat_png
 }

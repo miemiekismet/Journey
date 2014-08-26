@@ -4,7 +4,7 @@
  */
 
 
-var user_data = {
+var journey_user_data = {
     "Money": 50,
     "Debt": 0,
     "Health": 100,
@@ -21,7 +21,7 @@ var user_data = {
 var UserData = function() {
     this.init = function () {
         cc.log("#UserData init");
-        if (cc.sys.localStorage.getItem("user_data") == null) {
+        if (cc.sys.localStorage.getItem("journey_user_data") == null) {
             cc.log("#user data is null");
             this.saveToSystem();
         }
@@ -31,45 +31,45 @@ var UserData = function() {
         }
     };
     this.update = function() {
-        user_data = JSON.parse(cc.sys.localStorage.getItem("user_data"));
+        journey_user_data = JSON.parse(cc.sys.localStorage.getItem("journey_user_data"));
     }
     this.saveToSystem = function() {
-        cc.sys.localStorage.setItem("user_data", JSON.stringify(user_data));
+        cc.sys.localStorage.setItem("journey_user_data", JSON.stringify(journey_user_data));
     };
     this.getMoney = function() {
         this.update();
-        return user_data["Money"];
+        return journey_user_data["Money"];
     };
     this.setMoney = function(num) {
-        user_data["Money"] = num;
+        journey_user_data["Money"] = num;
         this.saveToSystem();
     };
     this.getDebt = function() {
         this.update();
-        return user_data["Debt"];
+        return journey_user_data["Debt"];
     };
     this.setDebt = function(num) {
-        user_data["Debt"] = num;
+        journey_user_data["Debt"] = num;
         this.saveToSystem();
     };
     this.getHealth = function() {
         this.update();
-        return user_data["Health"];
+        return journey_user_data["Health"];
     };
     this.setHealth = function(num) {
-        user_data["Health"] = num;
+        journey_user_data["Health"] = num;
         this.saveToSystem();
     };
     this.getAllStock = function() {
         this.update();
-        return user_data["Stock"];
+        return journey_user_data["Stock"];
     }
     this.getStock = function(id) {
         this.update();
-        return user_data["Stock"][id];
+        return journey_user_data["Stock"][id];
     };
     this.setStock = function(id, num) {
-        user_data["Stock"][id] += num;
+        journey_user_data["Stock"][id] += num;
         this.saveToSystem();
     };
 }

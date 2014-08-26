@@ -75,7 +75,7 @@ var SystemData = function() {
         var top = 2 / 3;
         var bottom = 1 / 3;
         var m = Math.floor((bottom + Math.random() * (top - bottom)) * n);
-        cc.log("m:" + m);
+        cc.log("#Today has: " + m + " goods");
         var chosen = new Array();
         for (var i = 0; i < n; i++) {
             cc.log("chosen.length" + chosen.length);
@@ -87,10 +87,12 @@ var SystemData = function() {
                     chosen[Math.floor(Math.random() * m)] = i;
                 }
             }
-            i++;
         }
         var chosen_prices = this.updatePrice(chosen);
         cc.log("Chosen: ");
+        for (var i = 0; i < n; i++) {
+            system_data["Goods"][i] = -1;
+        }
         for (var j = 0; j < m; j++) {
             system_data["Goods"][chosen[j]] = chosen_prices[j];
             cc.log(chosen[j] + ": " + chosen_prices[j]);

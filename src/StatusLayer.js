@@ -3,9 +3,10 @@
  */
 
 var StatusLayer = cc.Layer.extend({
-    labelDay: null,
-    labelCoin: null,
-    labelHealth: null,
+    label_day: null,
+    label_coin: null,
+    label_health: null,
+    bg_status: null,
     ctor:function () {
         this._super();
         this.init();
@@ -18,27 +19,31 @@ var StatusLayer = cc.Layer.extend({
         var user_info = UserData.create();
         var sys_info = SystemData.create();
 
-        this.labelDay = cc.LabelTTF.create("Days: " + sys_info.getDay(), "Helvetica", 20);
-        this.labelDay.setColor(cc.color(255, 255, 255));//black color
-        this.labelDay.setPosition(cc.p(winsize.width - 70, winsize.height - 20));
-        this.addChild(this.labelDay);
+        this.bg_status = cc.Sprite.create(res.bg_status_png);
+        this.bg_status.setPosition(cc.p(winsize.width - 135, winsize.height - 70));
+        this.addChild(this.bg_status);
 
-        this.labelCoin = cc.LabelTTF.create("Coins: " + user_info.getMoney(), "Helvetica", 20);
-        this.labelCoin.setColor(cc.color(255, 255, 255));//black color
-        this.labelCoin.setPosition(cc.p(winsize.width - 70, winsize.height - 50));
-        this.addChild(this.labelCoin);
+        this.label_day = cc.LabelTTF.create("Days: " + sys_info.getDay(), "Helvetica", 20);
+        this.label_day.setColor(cc.color(255, 255, 255));//black color
+        this.label_day.setPosition(cc.p(winsize.width - 135, winsize.height - 40));
+        this.addChild(this.label_day);
 
-        this.labelHealth = cc.LabelTTF.create("Health: " + user_info.getHealth(), "Helvetica", 20);
-        this.labelHealth.setColor(cc.color(255, 255, 255));//black color
-        this.labelHealth.setPosition(cc.p(winsize.width - 70, winsize.height - 80));
-        this.addChild(this.labelHealth);
+        this.label_coin = cc.LabelTTF.create("Coins: $" + user_info.getMoney(), "Helvetica", 20);
+        this.label_coin.setColor(cc.color(255, 255, 255));//black color
+        this.label_coin.setPosition(cc.p(winsize.width - 135, winsize.height - 70));
+        this.addChild(this.label_coin);
+
+        this.label_health = cc.LabelTTF.create("Health: " + user_info.getHealth(), "Helvetica", 20);
+        this.label_health.setColor(cc.color(255, 255, 255));//black color
+        this.label_health.setPosition(cc.p(winsize.width - 135, winsize.height - 100));
+        this.addChild(this.label_health);
     },
 
     update: function() {
         var user_info = UserData.create();
         var sys_info = SystemData.create();
-        this.labelDay.setString("Days: " + sys_info.getDay());
-        this.labelCoin.setString("Coins: " + user_info.getMoney());
-        this.labelHealth.setString("Health: " + user_info.getHealth());
+        this.label_day.setString("Days: " + sys_info.getDay());
+        this.label_coin.setString("Coins: $" + user_info.getMoney());
+        this.label_health.setString("Health: " + user_info.getHealth());
     }
 });
