@@ -244,7 +244,9 @@
                 <file name="src/AnimationLayer.js"/>
                 <file name="src/BackgroundLayer.js"/>
                 <file name="src/BallBoard.js"/>
+                <file name="src/FightDialog.js"/>
                 <file name="src/FightScene.js"/>
+                <file name="src/InnScene.js"/>
                 <file name="src/PlayScene.js"/>
                 <file name="src/BagScene.js"/>
                 <file name="src/MarketScene.js"/>
